@@ -1,6 +1,8 @@
 #include <stdio.h> 
 #include <string.h> 
-#include <assert.h> 
+#include <assert.h>
+#include<math.h> 
+
 typedef struct date
 {
     int year;
@@ -23,13 +25,12 @@ int new1=0;//追加数量
 void SaveFile();
 void MainMenu();
 void ReadFile();
-void DataChecker();
 void DataInput();
 void ClearAll();
 
-void SaveFile(){
+void SaveFile(int x){
     FILE *fp=fopen("demo.txt","a");
-    fwrite(list,sizeof(STUDENT),new1,fp);
+    fwrite(list,sizeof(STUDENT),x,fp);
     // fprintf(fp,"%d %s %d\n",list[count].no,list[count].name,list[count].age);//fwrite是将数据不经转换直接以二进制的形式写入文件，而fprintf是将数据转换为字符后再写入文件
     rewind(fp); //指针返回开头
     fclose(fp);
@@ -62,9 +63,27 @@ void ReadFile(){
         printf("-------------------------------------------------------------------------\n");
     }
 }
-void DataChecker(){
-    return;
+
+int Bit_Int(int n){
+	if(n==0)
+		return 1;
+	else
+		return log10(abs(n))+1;//求整数的位数
+	//例如  1234  lgx+1;                   
 }
+//位数验证
+
+
+int DataChecker(int y){
+    int x=Bit_Int(y);
+    if(x!=5){
+        return 0;
+    }else{
+        return 1;
+    }
+}
+//数据测试
+
 void DataInput(){
     new1 = 0;
     printf("输入录入数量:");
@@ -73,10 +92,15 @@ void DataInput(){
     for(int k=0;k<count+new1;k++){
     scanf("%d %s %d",&list[count+k].no,list[count+k].name,&list[count+k].age);
     // printf("%d %s %d\n",list[count+k].no,list[count+k].name,list[count+k].age);
+    if(DataChecker(list[count+k].no)==0){
+        printf("输入错误,保存先前数据\n");
+        SaveFile(k);
+        break;
+    }else{
+        SaveFile(new1);
+        };
     }
-    DataChecker();
-    SaveFile();
-    count++;
+    return;
 }
 void ClearAll(){
     FILE *fp;
